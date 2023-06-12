@@ -1,0 +1,14 @@
+{
+  "name": "github-auto-label-tests",
+  "version": "1.0.0",
+  "description": "Test suite for the Apache Camel Quarkus GitHub workflows",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "jasmine": "^5.0.0",
+    "js-yaml": "^4.1.0"
+  }
+}
