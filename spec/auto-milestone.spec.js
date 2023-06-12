@@ -149,4 +149,83 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
       expect(github.rest.issues.update).toHaveBeenCalledWith(expectedArgs);
     }
   });
+
+
+  it("No updates made if PR has no associated issues", () => {
+    const Context = {
+      payload: {
+        number: 1234,
+      },
+      repo: {
+        owner: "apache",
+        repo: "camel-quarkus",
+      }
+    };
+
+    const Github = {
+      graphql: jasmine.createSpy(),
+      rest: {
+        issues: {
+          listMilestones: jasmine.createSpy(),
+          update: jasmine.createSpy(),
+        }
+      }
+    }
+
+    const github = Object.create(Github);
+    const context = Object.create(Context);
+
+    github.graphql.and.returnValue({
+      "repository": {
+        "pullRequest": {
+          "commits": {
+            "nodes": [
+              {
+                "commit": {
+                  "message": "Fix an important issue"
+                },
+              },
+              {
+                "commit": {
+                  "message": "Fix another important issue"
+                },
+              },
+            ]
+          },
+          "closingIssuesReferences": {
+            "nodes": [
+            ]
+          }
+        }
+      }
+    });
+
+    github.rest.issues.listMilestones.and.returnValue({
+      data: [
+        {
+          number: 1,
+          title: "No fix/wont't fix",
+        },
+        {
+          number: 2,
+          title: "3.0.0",
+        },
+        {
+          number: 3,
+          title: "2.0.0",
+        },
+        {
+          number: 4,
+          title: "1.0.0",
+        },
+      ]
+    });
+
+    // Run the actions/script code with mocks
+    eval(script);
+    runGitHubScriptAction(context, github);
+
+    // No issue references are associated with the PR so ensure no issue updates happened
+    expect(github.rest.issues.update).not.toHaveBeenCalledWith()
+  });
 });
