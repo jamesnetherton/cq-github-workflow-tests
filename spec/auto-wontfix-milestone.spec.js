@@ -3,7 +3,7 @@ const utils = require('../etc/utils')
 /**
  * Prerequisites
  */
-const script = utils.readWorkflowScriptAction({workflowFileName: 'assign-issue-milestone.yaml', jobId: 'assign-wont-fix-issue-milestone'});
+const script = utils.readWorkflowScriptAction({workflowFileName: 'assign-wontfix-issue-milestone.yaml', jobId: 'assign-wont-fix-issue-milestone'});
 
 
 describe("Camel Quarkus Issue Auto wontfix Milestone Assignment", () => {

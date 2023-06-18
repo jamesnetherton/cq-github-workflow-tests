@@ -3,13 +3,15 @@ const utils = require('../etc/utils')
 /**
  * Prerequisites
  */
-const script = utils.readWorkflowScriptAction({workflowFileName: 'assign-issue-milestone.yaml', jobId: 'assign-issue-milestone'});
+const script = utils.readWorkflowScriptAction({ workflowFileName: 'assign-issue-milestone.yaml', jobId: 'assign-issue-milestone' });
 
 
 describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
 
   it("Adds closed issues to the latest open milestone", () => {
     const Context = {
+      after: "721c8d08016ebc3fe672cfd240f3559a1e834d5f8e8ac4044cb8ec199f04fd9d",
+      before: "f14a6c0d7b432490fd977f5956fcb6ab869d97afc7706e6172c0360fd1626d52",
       payload: {
         number: 1234,
       },
@@ -20,8 +22,10 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     };
 
     const Github = {
-      graphql: jasmine.createSpy(),
       rest: {
+        repos: {
+          compareCommitsWithBasehead: jasmine.createSpy(),
+        },
         issues: {
           listMilestones: jasmine.createSpy(),
           update: jasmine.createSpy(),
@@ -32,85 +36,71 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     const github = Object.create(Github);
     const context = Object.create(Context);
 
-    github.graphql.and.returnValue({
-      "repository": {
-        "pullRequest": {
-          "commits": {
-            "nodes": [
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nFix #1"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nFixes #2"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nFixed #3"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nFixes https://github.com/apache/camel-quarkus/issues/4"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nResolve #5"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nResolves #6"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nResolved #7"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nClose #8"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nCloses #9"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nClosed #10"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an important issue\n\nClosed #11"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix an without an issue reference"
-                },
-              },
-            ]
+    github.rest.repos.compareCommitsWithBasehead.and.returnValue({
+      "data": {
+        "commits": [
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nFix #1"
+            },
           },
-          "closingIssuesReferences": {
-            "nodes": [
-              {
-                "number": 11
-              },
-              {
-                "number": 12
-              }
-            ]
-          }
-        }
-      }
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nFixes #2"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nFixed #3"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nFixes https://github.com/apache/camel-quarkus/issues/4"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nResolve #5"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nResolves #6"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nResolved #7"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nClose #8"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nCloses #9"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nClosed #10"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an important issue\n\nClosed #11"
+            },
+          },
+          {
+            "commit": {
+              "message": "Fix an without an issue reference"
+            },
+          },
+        ]
+      },
     });
 
     github.rest.issues.listMilestones.and.returnValue({
@@ -139,7 +129,7 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     runGitHubScriptAction(context, github);
 
     // Verify each fixed issue got allocated to the correct milestone (3.0.0)
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 11; i++) {
       let expectedArgs = {
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -153,6 +143,8 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
 
   it("No updates made if PR has no associated issues", () => {
     const Context = {
+      after: "721c8d08016ebc3fe672cfd240f3559a1e834d5f8e8ac4044cb8ec199f04fd9d",
+      before: "f14a6c0d7b432490fd977f5956fcb6ab869d97afc7706e6172c0360fd1626d52",
       payload: {
         number: 1234,
       },
@@ -163,8 +155,10 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     };
 
     const Github = {
-      graphql: jasmine.createSpy(),
       rest: {
+        repos: {
+          compareCommitsWithBasehead: jasmine.createSpy(),
+        },
         issues: {
           listMilestones: jasmine.createSpy(),
           update: jasmine.createSpy(),
@@ -175,29 +169,21 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     const github = Object.create(Github);
     const context = Object.create(Context);
 
-    github.graphql.and.returnValue({
-      "repository": {
-        "pullRequest": {
-          "commits": {
-            "nodes": [
-              {
-                "commit": {
-                  "message": "Fix an important issue"
-                },
-              },
-              {
-                "commit": {
-                  "message": "Fix another important issue"
-                },
-              },
-            ]
+    github.rest.repos.compareCommitsWithBasehead.and.returnValue({
+      "data": {
+        "commits": [
+          {
+            "commit": {
+              "message": "Fix an important issue"
+            },
           },
-          "closingIssuesReferences": {
-            "nodes": [
-            ]
+          {
+            "commit": {
+              "message": "Fix another important issue"
+            },
           }
-        }
-      }
+        ]
+      },
     });
 
     github.rest.issues.listMilestones.and.returnValue({
