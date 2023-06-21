@@ -352,10 +352,13 @@ describe("Camel Quarkus Issue Auto Labelling", () => {
       },
       {
         name: "user/addedB",
+      },
+      {
+        name: "housekeeping",
       }
     ]
 
-    assertIssueLabelsApplied({issueTitle: 'There is a problem with the jms extension', issueLabels: existingLabels, expectedIssueLabels: ['area/jms', 'user/addedA', 'user/addedB']})
+    assertIssueLabelsApplied({issueTitle: 'There is a problem with the jms extension', issueLabels: existingLabels, expectedIssueLabels: ['area/jms', 'user/addedA', 'user/addedB', 'housekeeping']})
   });
 
   it("Update not run if no new labels were added", () => {
