@@ -111,7 +111,7 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
         },
         {
           number: 2,
-          title: "3.0.0",
+          title: "3.30.300",
         },
         {
           number: 3,
@@ -128,7 +128,7 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
     eval(script);
     runGitHubScriptAction(context, github);
 
-    // Verify each fixed issue got allocated to the correct milestone (3.0.0)
+    // Verify each fixed issue got allocated to the correct milestone (3.30.300)
     for (let i = 1; i <= 11; i++) {
       let expectedArgs = {
         owner: context.repo.owner,
@@ -194,7 +194,7 @@ describe("Camel Quarkus Issue Auto Milestone Assignment", () => {
         },
         {
           number: 2,
-          title: "3.0.0",
+          title: "3.30.300",
         },
         {
           number: 3,
