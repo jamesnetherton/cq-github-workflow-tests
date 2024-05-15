@@ -327,7 +327,12 @@ describe("Camel Quarkus Issue Auto Labelling", () => {
     assertIssueLabelsApplied({issueTitle: 'Foo fails on windows', expectedIssueLabels: ['platform/windows']})
   });
 
-
+  /**
+   * area/fips label tests
+   */
+  it("Applies an area/fips label from issue title", () => {
+    assertIssueLabelsApplied({issueTitle: 'Something does not work when FIPS enabled', expectedIssueLabels: ['area/fips']})
+  });
 
   /**
    * Misc label tests
