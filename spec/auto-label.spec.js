@@ -335,6 +335,14 @@ describe("Camel Quarkus Issue Auto Labelling", () => {
   });
 
   /**
+   * flaky-test label tests
+   */
+  it("Applies an flaky-test label from issue title", () => {
+    assertIssueLabelsApplied({issueTitle: 'There is a Flaky Test in JMS', expectedIssueLabels: ['flaky-test', 'area/testing', 'test', 'area/jms']})
+    assertIssueLabelsApplied({issueTitle: 'Intermittent failure of kafka tests', expectedIssueLabels: ['flaky-test', 'area/testing', 'test']})
+  });
+
+  /**
    * Misc label tests
    */
   it("Removes stale labels", () => {
