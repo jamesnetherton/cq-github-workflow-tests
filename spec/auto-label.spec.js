@@ -30,9 +30,10 @@ const script = utils.readWorkflowScriptAction({workflowFileName: "label-issue.ya
 /**
  * Verifies the specified expected labels were applied to an issue based on the given issue title or body
  */
-function assertIssueLabelsApplied({issueTitle = "", issueBody = "", issueLabels = [], expectedIssueLabels = [], createLabels = false}) {
+function assertIssueLabelsApplied({issueTitle = "", issueBody = "", issueLabels = [], expectedIssueLabels = [], createLabels = false, action = "opened"}) {
   const Context = {
     payload: {
+      action: action,
       issue: {
         body: issueBody,
         title: issueTitle,
@@ -43,11 +44,12 @@ function assertIssueLabelsApplied({issueTitle = "", issueBody = "", issueLabels 
     repo: {
       owner: "apache",
       repo: "camel-quarkus",
-    }
+    },
   };
 
   const Github = {
     graphql: jasmine.createSpy(),
+    paginate: jasmine.createSpy(),
     rest: {
       issues: {
         createLabel: jasmine.createSpy(),
@@ -66,6 +68,8 @@ function assertIssueLabelsApplied({issueTitle = "", issueBody = "", issueLabels 
       }
     }
   });
+
+  github.paginate.and.returnValue(createLabels == true ? [] : expectedIssueLabels);
 
   // Run the actions/script code with mocks
   eval(script);
