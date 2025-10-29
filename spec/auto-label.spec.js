@@ -349,7 +349,7 @@ describe("Camel Quarkus Issue Auto Labelling", () => {
   /**
    * Misc label tests
    */
-  it("Removes stale labels", () => {
+  it("Removes stale labels on edit", () => {
     const existingLabels = [
       {
         name: "area/infinispan",
@@ -359,10 +359,10 @@ describe("Camel Quarkus Issue Auto Labelling", () => {
       }
     ]
 
-    assertIssueLabelsApplied({issueTitle: 'There is a problem with the jms extension', issueLabels: existingLabels, expectedIssueLabels: ['area/jms']})
+    assertIssueLabelsApplied({issueTitle: 'There is a problem with the jms extension', issueLabels: existingLabels, expectedIssueLabels: ['area/jms'], action: "edited"})
   });
 
-  it("Preserves existing user added labels", () => {
+  it("Preserves existing user added labels on open", () => {
     const existingLabels = [
       {
         name: "user/addedA",
